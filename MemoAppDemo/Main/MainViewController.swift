@@ -7,13 +7,12 @@
 
 import UIKit
 import SnapKit
-
-final class MainViewController: UIViewController, UITableViewDataSource  {
+class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
     
     private let appLabel = UILabel()
     private let MemoListTable = UITableView()
     private let viewModel = MainViewModel()
-    
+    private let customCell = MemoTableViewCell()
     private let rightButton : UIButton = {
         let button = UIButton()
         button.setPreferredSymbolConfiguration(.init(pointSize: 28, weight:  .regular, scale: .default), forImageIn: .normal)
@@ -26,17 +25,15 @@ final class MainViewController: UIViewController, UITableViewDataSource  {
         super.viewDidLoad()
         self.setNavigation()
         self.setTableView()
-        viewModel.getMemoList()
-        viewModel.memoLength.bind{ make in
-            print("아니 이거 왜 이래 \(make)")
-        }
+        viewModel.getMemoListLength()
     }
     
     private func setTableView() {
         self.view.addSubview(MemoListTable)
-        self.MemoListTable.register(MemoTableViewCell.self, forCellReuseIdentifier: "cell")
-        self.MemoListTable.dataSource = self
+        self.MemoListTable.register(MemoTableViewCell.self, forCellReuseIdentifier: MemoTableViewCell.cellId)
         self.MemoListTable.rowHeight = 60
+        self.MemoListTable.delegate = self
+        self.MemoListTable.dataSource = self
         self.MemoListTable.snp.makeConstraints{ make in
             make.width.height.equalToSuperview()
             make.top.equalToSuperview().inset(100)
@@ -44,7 +41,6 @@ final class MainViewController: UIViewController, UITableViewDataSource  {
     }
     
     private func setNavigation() {
-        //        let menuBarItem = UIBarButtonItem(customView: self.rightButton)
         self.navigationController?.isNavigationBarHidden = false
         self.navigationItem.title = "DemoMemo"
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -55,21 +51,21 @@ final class MainViewController: UIViewController, UITableViewDataSource  {
         let controller = WriteViewController()
         self.navigationController?.pushViewController(controller, animated: true)
     }
-    //cell의 갯수 (임의로 설정)
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        var length = 0
+        var length : Int = 0
         viewModel.memoLength.bind{ make in
             length = make
+            print(make)
         }
         
         return length
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell: UITableViewCell = self.MemoListTable.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? MemoTableViewCell else {
-            return UITableViewCell()
-        }
+        let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: MemoTableViewCell.cellId) as! MemoTableViewCell
         cell.selectionStyle = .none
+        
         return cell
     }
 }

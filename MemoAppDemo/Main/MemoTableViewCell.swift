@@ -7,28 +7,38 @@
 
 import UIKit
 import SnapKit
-import RealmSwift
 
-final class MemoTableViewCell: UITableViewCell {
+class MemoTableViewCell: UITableViewCell {
+    static let cellId = "memoCell"
     private let viewModel = MainViewModel()
-    private let cellLabel = UILabel()
-    private let updateMemoButton = UIButton()
-    private let delMemoButton = UIButton()
+    public let cellLabel = UILabel()
+    let updateMemoButton = UIButton()
+    let delMemoButton = UIButton()
+    public let test123 : UILabel = {
+        let test1 = UILabel()
+        test1.text = "테스트용 변수입니다."
+        return test1
+    }()
 //    private var memoList : Results<Memo?> = nil
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.setLabel()
+//        self.setLabel()
+        
         self.setDelMemoButton()
         self.setUpdateMemoButton()
-        
+        self.viewModel.getMemoData()
     }
     override func layoutSubviews() {
-        
+        viewModel.memoTitle.bind{make in
+            self.setLabel()
+        }
     }
-    private func setLabel() {
+    
+     func setLabel() {
         self.addSubview(cellLabel)
         self.cellLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        self.cellLabel.text = "메모"
+        
+        //self.cellLabel.text = title[0].title
         self.cellLabel.font = UIFont.boldSystemFont(ofSize: 25)
         self.cellLabel.snp.makeConstraints{make in
             make.leading.equalToSuperview().inset(24)
@@ -61,7 +71,6 @@ final class MemoTableViewCell: UITableViewCell {
     }
     //메모 수정 구현 필요
     @objc func updateMemo() {
-        //viewModel.getMemoList()
         print("click update memo!")
     }
     //메모 삭제 구현 필요

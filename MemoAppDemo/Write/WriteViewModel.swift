@@ -5,18 +5,18 @@
 //  Created by vex on 2022/04/08.
 //
 import RealmSwift
+import SwiftUI
 
 final class WriteViewModel {
     
     private let realm = try! Realm()
     
     func saveMemo(title: String, content: String) {
-
-        let memo = Memo()
-        memo.title = title
-        memo.content = content
+        let memoList = Memo(value: ["title": title, "content": content])
+        let memoData = MemoModel()
+        memoData.memo.append(memoList)
         try! realm.write {
-            realm.add(memo)
+            realm.add(memoData)
         }
     }
 }

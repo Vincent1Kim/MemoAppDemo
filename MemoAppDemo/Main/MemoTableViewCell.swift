@@ -7,20 +7,24 @@
 
 import UIKit
 import SnapKit
+import RealmSwift
 
 final class MemoTableViewCell: UITableViewCell {
-    
+    private let viewModel = MainViewModel()
     private let cellLabel = UILabel()
     private let updateMemoButton = UIButton()
     private let delMemoButton = UIButton()
-    
+//    private var memoList : Results<Memo?> = nil
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.setLabel()
         self.setDelMemoButton()
         self.setUpdateMemoButton()
+        
     }
-    
+    override func layoutSubviews() {
+        
+    }
     private func setLabel() {
         self.addSubview(cellLabel)
         self.cellLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
@@ -57,6 +61,7 @@ final class MemoTableViewCell: UITableViewCell {
     }
     //메모 수정 구현 필요
     @objc func updateMemo() {
+        //viewModel.getMemoList()
         print("click update memo!")
     }
     //메모 삭제 구현 필요

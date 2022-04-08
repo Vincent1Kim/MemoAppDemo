@@ -10,9 +10,10 @@ import SnapKit
 
 final class MainViewController: UIViewController, UITableViewDataSource  {
     
-    
     private let appLabel = UILabel()
     private let MemoListTable = UITableView()
+    private let viewModel = MainViewModel()
+    
     private let rightButton : UIButton = {
         let button = UIButton()
         button.setPreferredSymbolConfiguration(.init(pointSize: 28, weight:  .regular, scale: .default), forImageIn: .normal)
@@ -25,6 +26,10 @@ final class MainViewController: UIViewController, UITableViewDataSource  {
         super.viewDidLoad()
         self.setNavigation()
         self.setTableView()
+        viewModel.getMemoList()
+        viewModel.memoLength.bind{ make in
+            print("아니 이거 왜 이래 \(make)")
+        }
     }
     
     private func setTableView() {
@@ -39,21 +44,25 @@ final class MainViewController: UIViewController, UITableViewDataSource  {
     }
     
     private func setNavigation() {
-//        let menuBarItem = UIBarButtonItem(customView: self.rightButton)
+        //        let menuBarItem = UIBarButtonItem(customView: self.rightButton)
         self.navigationController?.isNavigationBarHidden = false
         self.navigationItem.title = "DemoMemo"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(moveWriterController))
     }
-    //지금 당장 필요없기에 임시적으로 주석처리
+    
     @objc func moveWriterController() {
-//        print("왜 먹지 않을까요!")
         let controller = WriteViewController()
         self.navigationController?.pushViewController(controller, animated: true)
     }
     //cell의 갯수 (임의로 설정)
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 50
+        var length = 0
+        viewModel.memoLength.bind{ make in
+            length = make
+        }
+        
+        return length
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

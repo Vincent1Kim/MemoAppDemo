@@ -24,14 +24,14 @@ class MainViewModel : MainViewModelProtocol {
     }
     
     func getMemo() {
-        print(realm.objects(MemoModel.self))
+//        print(realm.objects(MemoModel.self))
         memo.value = realm.objects(MemoModel.self)
     }
     func delMemo(index : Int) {
-        let test = realm.objects(MemoModel.self)
+        let memoData = realm.objects(MemoModel.self)
        // guard let memo = realm.object(ofType: MemoModel.self, forPrimaryKey: index) else { return nil }
         try! realm.write{
-            realm.delete(test[index])
+            realm.delete(memoData[index])
         }
     }
 }

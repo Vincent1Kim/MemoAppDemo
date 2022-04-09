@@ -8,15 +8,14 @@
 import UIKit
 import SnapKit
 import RealmSwift
+
 class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    
-    
+    var delegate : WriteViewController?
     private let appLabel = UILabel()
     private let MemoListTable = UITableView()
     private let viewModel = MainViewModel()
     private let customCell = MemoTableViewCell()
-    
     private let rightButton : UIButton = {
         let button = UIButton()
         button.setPreferredSymbolConfiguration(.init(pointSize: 28, weight:  .regular, scale: .default), forImageIn: .normal)
@@ -29,11 +28,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         super.viewDidLoad()
         self.setNavigation()
         self.setTableView()
-        viewModel.getMemoListLength()
-        viewModel.getMemo()
-        viewModel.memo.bind{make in
-            
-        }
+        self.viewModel.getMemoListLength()
+        self.viewModel.getMemo()
     }
     
     private func setTableView() {
@@ -72,22 +68,25 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MemoTableViewCell.cellId) as! MemoTableViewCell
         cell.selectionStyle = .none
-        //cell.delegate = self
         viewModel.memo.bind{make in
             cell.cellLabel.text = make![indexPath.row].title
         }
         cell.delMemoButton.addTarget(self, action: #selector(deleteMemo(index:)), for: .touchUpInside)
         cell.delMemoButton.tag = indexPath.row
-        cell.updateMemoButton.addTarget(self, action: #selector(updateMemo), for: .touchUpInside)
+        
+        cell.updateMemoButton.addTarget(self, action: #selector(updateMemo(index:)), for: .touchUpInside)
+        cell.updateMemoButton.tag = indexPath.row
         return cell
     }
     @objc func deleteMemo(index : UIButton) {
-        print(index.tag)
-        //viewModel.delMemo(index: index.tag)
+        viewModel.delMemo(index: index.tag)
         //self.MemoListTable.reloadData()
     }
-    @objc func updateMemo() {
+    @objc func updateMemo(index : UIButton) {
         let controller = WriteViewController()
+        self.delegate = controller
+        print(index.description)
+        delegate?.updateMemo(memoIdx: index.tag)
         self.navigationController?.pushViewController(controller, animated: true)
     }
 }

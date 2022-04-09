@@ -7,8 +7,11 @@
 
 import UIKit
 import SnapKit
-
-final class WriteViewController: UIViewController, UITextViewDelegate{
+protocol UpdateMemoDelegate {
+    func updateMemo(memoIdx: Int)
+}
+final class WriteViewController: UIViewController, UITextViewDelegate, UpdateMemoDelegate{
+    private var idx : Int? = nil
     private let titleTextField = UITextField()
     private let contentTextView = UITextView()
     private let viewModel = WriteViewModel()
@@ -18,6 +21,15 @@ final class WriteViewController: UIViewController, UITextViewDelegate{
         setNavigation()
         setTitleTextField()
         setContentTextView()
+        viewModel.memo.bind{make in
+            self.titleTextField.text = make?.title
+            self.contentTextView.text = make?.content
+        }
+    }
+    func updateMemo(memoIdx: Int) {
+        idx = memoIdx
+        viewModel.getMemo(idx: memoIdx)
+        print(memoIdx)
     }
     private func setNavigation() {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "메모 저장", style: .plain, target: self, action: #selector(saveMemo))
@@ -47,8 +59,11 @@ final class WriteViewController: UIViewController, UITextViewDelegate{
         }
     }
     @objc func saveMemo() {
-//        let controller = MainViewController()
-        self.viewModel.saveMemo(title: self.titleTextField.text!, content: self.contentTextView.text!)
-        self.navigationController?.popViewController(animated: true)
+        if idx != nil {
+            self.viewModel.updateMemo(idx: idx!, title: self.titleTextField.text!, content: self.contentTextView.text)
+        }else {
+            self.viewModel.saveMemo(title: self.titleTextField.text!, content: self.contentTextView.text!)
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 }

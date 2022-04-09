@@ -22,8 +22,8 @@ final class WriteViewController: UIViewController, UITextViewDelegate, UpdateMem
         setTitleTextField()
         setContentTextView()
         viewModel.memo.bind{make in
-            self.titleTextField.text = make?.title
-            self.contentTextView.text = make?.content
+            self.titleTextField.text = make?[0].title
+            self.contentTextView.text = make?[0].content
         }
     }
     func updateMemo(memoIdx: Int) {
@@ -61,6 +61,7 @@ final class WriteViewController: UIViewController, UITextViewDelegate, UpdateMem
     @objc func saveMemo() {
         if idx != nil {
             self.viewModel.updateMemo(idx: idx!, title: self.titleTextField.text!, content: self.contentTextView.text)
+            self.navigationController?.popViewController(animated: true)
         }else {
             self.viewModel.saveMemo(title: self.titleTextField.text!, content: self.contentTextView.text!)
             self.navigationController?.popViewController(animated: true)

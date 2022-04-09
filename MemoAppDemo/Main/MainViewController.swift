@@ -85,7 +85,6 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     @objc func updateMemo(index : UIButton) {
         let controller = WriteViewController()
         self.delegate = controller
-        print(index.description)
         delegate?.updateMemo(memoIdx: index.tag)
         self.navigationController?.pushViewController(controller, animated: true)
     }

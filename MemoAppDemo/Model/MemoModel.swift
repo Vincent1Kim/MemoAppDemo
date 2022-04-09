@@ -9,6 +9,7 @@ import RealmSwift
 
 
 final class MemoModel: Object {
+    @objc dynamic var idx: Int = 0
     @objc dynamic var title: String = ""
     @objc dynamic var content: String = ""
 }

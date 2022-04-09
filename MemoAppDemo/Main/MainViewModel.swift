@@ -24,7 +24,7 @@ class MainViewModel : MainViewModelProtocol {
     }
     
     func getMemo() {
-//        print(realm.objects(MemoModel.self))
+        print(realm.objects(MemoModel.self))
         memo.value = realm.objects(MemoModel.self)
     }
     func delMemo(index : Int) {

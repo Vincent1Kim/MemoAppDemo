@@ -8,7 +8,9 @@
 import UIKit
 import SnapKit
 import RealmSwift
-class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
+class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    
+    
     
     private let appLabel = UILabel()
     private let MemoListTable = UITableView()
@@ -28,8 +30,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.setNavigation()
         self.setTableView()
         viewModel.getMemoListLength()
-        viewModel.getMemoData()
-        viewModel.memoTitle.bind{make in
+        viewModel.getMemo()
+        viewModel.memo.bind{make in
             
         }
     }
@@ -70,9 +72,22 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MemoTableViewCell.cellId) as! MemoTableViewCell
         cell.selectionStyle = .none
-        viewModel.memoTitle.bind{make in
+        //cell.delegate = self
+        viewModel.memo.bind{make in
             cell.cellLabel.text = make![indexPath.row].title
         }
+        cell.delMemoButton.addTarget(self, action: #selector(deleteMemo(index:)), for: .touchUpInside)
+        cell.delMemoButton.tag = indexPath.row
+        cell.updateMemoButton.addTarget(self, action: #selector(updateMemo), for: .touchUpInside)
         return cell
+    }
+    @objc func deleteMemo(index : UIButton) {
+        print(index.tag)
+        //viewModel.delMemo(index: index.tag)
+        //self.MemoListTable.reloadData()
+    }
+    @objc func updateMemo() {
+        let controller = WriteViewController()
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 }

@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 
 class MemoTableViewCell: UITableViewCell {
+    
     static let cellId = "memoCell"
     private let viewModel = MainViewModel()
     public let cellLabel = UILabel()
@@ -28,7 +29,7 @@ class MemoTableViewCell: UITableViewCell {
         self.setUpdateMemoButton()
     }
     override func layoutSubviews() {
-        viewModel.memoTitle.bind{make in
+        viewModel.memo.bind{make in
             self.setLabel()
         }
     }
@@ -46,7 +47,7 @@ class MemoTableViewCell: UITableViewCell {
     
     private func setDelMemoButton() {
         self.contentView.addSubview(self.delMemoButton)
-        self.delMemoButton.addTarget(self, action: #selector(self.delMemo), for: .touchUpInside)
+       // self.delMemoButton.addTarget(self, action: #selector(self.delMemo), for: .touchUpInside)
         self.delMemoButton.setImage(UIImage(systemName: "trash"), for: .normal)
         self.delMemoButton.setPreferredSymbolConfiguration(.init(pointSize: 25, weight:  .regular, scale: .default), forImageIn: .normal)
         self.delMemoButton.snp.makeConstraints{make in
@@ -57,7 +58,7 @@ class MemoTableViewCell: UITableViewCell {
     
     private func setUpdateMemoButton() {
         self.contentView.addSubview(self.updateMemoButton)
-        self.updateMemoButton.addTarget(self, action: #selector(self.updateMemo), for: .touchUpInside)
+        //self.updateMemoButton.addTarget(self, action: #selector(self.updateMemo), for: .touchUpInside)
         self.updateMemoButton.setImage(UIImage(systemName: "pencil"), for: .normal)
         self.updateMemoButton.setPreferredSymbolConfiguration(.init(pointSize: 25, weight:  .regular, scale: .default), forImageIn: .normal)
         self.updateMemoButton.snp.makeConstraints{make in
@@ -67,13 +68,5 @@ class MemoTableViewCell: UITableViewCell {
     }
     required init?(coder: NSCoder) {
         fatalError()
-    }
-    //메모 수정 구현 필요
-    @objc func updateMemo() {
-        print("click update memo!")
-    }
-    //메모 삭제 구현 필요
-    @objc func delMemo() {
-        print("click del memo!")
     }
 }

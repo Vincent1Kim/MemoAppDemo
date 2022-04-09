@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 
 final class WriteViewController: UIViewController, UITextViewDelegate{
-    
     private let titleTextField = UITextField()
     private let contentTextView = UITextView()
     private let viewModel = WriteViewModel()

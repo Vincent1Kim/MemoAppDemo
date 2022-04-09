@@ -14,7 +14,8 @@ final class WriteViewModel {
     func saveMemo(title: String, content: String) {
         let memoList = Memo(value: ["title": title, "content": content])
         let memoData = MemoModel()
-        memoData.memo.append(memoList)
+        memoData.title = title
+        memoData.content = title
         try! realm.write {
             realm.add(memoData)
         }

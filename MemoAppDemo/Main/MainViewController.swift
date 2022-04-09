@@ -7,12 +7,14 @@
 
 import UIKit
 import SnapKit
+import RealmSwift
 class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
     
     private let appLabel = UILabel()
     private let MemoListTable = UITableView()
     private let viewModel = MainViewModel()
     private let customCell = MemoTableViewCell()
+    
     private let rightButton : UIButton = {
         let button = UIButton()
         button.setPreferredSymbolConfiguration(.init(pointSize: 28, weight:  .regular, scale: .default), forImageIn: .normal)
@@ -26,6 +28,10 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.setNavigation()
         self.setTableView()
         viewModel.getMemoListLength()
+        viewModel.getMemoData()
+        viewModel.memoTitle.bind{make in
+            
+        }
     }
     
     private func setTableView() {
@@ -56,7 +62,6 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         var length : Int = 0
         viewModel.memoLength.bind{ make in
             length = make
-            print(make)
         }
         
         return length
@@ -65,7 +70,9 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MemoTableViewCell.cellId) as! MemoTableViewCell
         cell.selectionStyle = .none
-        
+        viewModel.memoTitle.bind{make in
+            cell.cellLabel.text = make![indexPath.row].title
+        }
         return cell
     }
 }

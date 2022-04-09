@@ -26,7 +26,6 @@ class MemoTableViewCell: UITableViewCell {
         
         self.setDelMemoButton()
         self.setUpdateMemoButton()
-        self.viewModel.getMemoData()
     }
     override func layoutSubviews() {
         viewModel.memoTitle.bind{make in

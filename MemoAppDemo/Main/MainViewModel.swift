@@ -19,8 +19,8 @@ class MainViewModel : MainViewModelProtocol {
     
     
     func getMemoListLength() {
-        let memoSize = realm.objects(MemoModel.self)
-        memoLength.value = memoSize.count
+        let memoSize = realm.objects(MemoModel.self).count
+        memoLength.value = memoSize
     }
     
     func getMemo() {
@@ -29,7 +29,6 @@ class MainViewModel : MainViewModelProtocol {
     }
     func delMemo(index : Int) {
         let memoData = realm.objects(MemoModel.self)
-       // guard let memo = realm.object(ofType: MemoModel.self, forPrimaryKey: index) else { return nil }
         try! realm.write{
             realm.delete(memoData[index])
         }

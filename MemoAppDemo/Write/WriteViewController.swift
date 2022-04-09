@@ -54,7 +54,6 @@ final class WriteViewController: UIViewController, UITextViewDelegate, UpdateMem
         self.titleTextField.snp.makeConstraints{ make in
             make.top.equalToSuperview().inset(100)
             make.leading.trailing.equalToSuperview().inset(16)
-//            make.trailing.equalToSuperview().
             make.height.equalTo(80)
         }
     }

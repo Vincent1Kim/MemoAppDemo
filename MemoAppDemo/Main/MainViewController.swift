@@ -9,13 +9,19 @@ import UIKit
 import SnapKit
 import RealmSwift
 
-class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UpdateMemoDelegate {
+    func updateMemo(memoIdx: Int) {
+        print(memoIdx)
+    }
+    
     
     var delegate : WriteViewController?
+    var array = Array<MemoModel>()
     private let appLabel = UILabel()
     private let memoTableView = UITableView()
     private let viewModel = MainViewModel()
     private let customCell = MemoTableViewCell()
+
     private let rightButton : UIButton = {
         let button = UIButton()
         button.setPreferredSymbolConfiguration(.init(pointSize: 28, weight:  .regular, scale: .default), forImageIn: .normal)
@@ -28,8 +34,12 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         super.viewDidLoad()
         self.setNavigation()
         self.setTableView()
-        self.viewModel.getMemoListLength()
         self.viewModel.getMemo()
+        viewModel.memo.bind{ make in
+            for index in 0..<make!.count{
+                self.array.append(make![index])
+            }
+        }
     }
     
     private func setTableView() {
@@ -57,19 +67,14 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        var length : Int = 0
-        viewModel.memoLength.bind{ make in
-            length = make
-        }
-        
-        return length
+        return array.count
     }
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .delete
     }
     func tableView(_ tableView: UITableView ,cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MemoTableViewCell.cellId) as! MemoTableViewCell
-//        cell.selectionStyle = .none
+        cell.selectionStyle = .none
         viewModel.memo.bind{make in
             cell.cellLabel.text = make![indexPath.row].title
         }
@@ -80,10 +85,9 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            //viewModel.delMemo(index: indexPath.row)
-            memoTableView.beginUpdates()
-            memoTableView.deleteRows(at: [indexPath], with: .fade)
-            memoTableView.endUpdates()
+            viewModel.delMemo(index: indexPath.row)
+            self.array.remove(at: indexPath.row)
+            self.memoTableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
   

@@ -27,6 +27,9 @@ final class WriteViewController: UIViewController, UITextViewDelegate, UpdateMem
             self.contentTextView.text = make?[0].content
         }
     }
+    override func viewDidAppear(_ animated: Bool) {
+        
+    }
     func updateMemo(memoIdx: Int) {
         idx = memoIdx
         viewModel.getMemo(idx: memoIdx)

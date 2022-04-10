@@ -28,19 +28,16 @@ final class WriteViewModel : WriteViewModelProtocol {
             realm.add(initMemo)
         }
     }
-    
     func getMemo(idx : Int) {
         let memoList = realm.objects(MemoModel.self).filter("idx = \(idx)")
         memo.value = memoList
     }
     func updateMemo(idx : Int, title: String, content: String) {
         if let memoData = realm.objects(MemoModel.self).filter("idx = \(idx)").first {
-            
             try? realm.write {
                 memoData.title = title
                 memoData.content = content
             }
-            
         }
     }
 }

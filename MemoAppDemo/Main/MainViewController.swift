@@ -9,19 +9,15 @@ import UIKit
 import SnapKit
 import RealmSwift
 
-class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UpdateMemoDelegate {
-    func updateMemo(memoIdx: Int) {
-        print(memoIdx)
-    }
-    
-    
+class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+   
     var delegate : WriteViewController?
-    var array = Array<MemoModel>()
+    private var array : Array<MemoModel?> = []
     private let appLabel = UILabel()
     private let memoTableView = UITableView()
     private let viewModel = MainViewModel()
     private let customCell = MemoTableViewCell()
-
+    
     private let rightButton : UIButton = {
         let button = UIButton()
         button.setPreferredSymbolConfiguration(.init(pointSize: 28, weight:  .regular, scale: .default), forImageIn: .normal)
@@ -34,12 +30,16 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         super.viewDidLoad()
         self.setNavigation()
         self.setTableView()
+    }
+    override func viewWillAppear(_ animated: Bool) {
         self.viewModel.getMemo()
+        array = Array<MemoModel>()
         viewModel.memo.bind{ make in
             for index in 0..<make!.count{
                 self.array.append(make![index])
             }
         }
+        self.memoTableView.reloadData()
     }
     
     private func setTableView() {
@@ -48,6 +48,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.memoTableView.rowHeight = 60
         self.memoTableView.delegate = self
         self.memoTableView.dataSource = self
+        self.memoTableView.separatorStyle = .none
         self.memoTableView.snp.makeConstraints{ make in
             make.width.height.equalToSuperview()
             make.top.equalToSuperview().inset(100)
@@ -90,7 +91,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             self.memoTableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
-  
+    
     @objc func updateMemo(index : UIButton) {
         let controller = WriteViewController()
         self.delegate = controller

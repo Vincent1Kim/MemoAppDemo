@@ -14,7 +14,6 @@ class MemoTableViewCell: UITableViewCell {
     private let viewModel = MainViewModel()
     public let cellLabel = UILabel()
     let updateMemoButton = UIButton()
-    let delMemoButton = UIButton()
     public let test123 : UILabel = {
         let test1 = UILabel()
         test1.text = "테스트용 변수입니다."
@@ -25,7 +24,6 @@ class MemoTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 //        self.setLabel()
         
-        self.setDelMemoButton()
         self.setUpdateMemoButton()
     }
     override func layoutSubviews() {
@@ -44,25 +42,14 @@ class MemoTableViewCell: UITableViewCell {
             make.leading.equalToSuperview().inset(24)
         }
     }
-    
-    private func setDelMemoButton() {
-        self.contentView.addSubview(self.delMemoButton)
-       // self.delMemoButton.addTarget(self, action: #selector(self.delMemo), for: .touchUpInside)
-        self.delMemoButton.setImage(UIImage(systemName: "trash"), for: .normal)
-        self.delMemoButton.setPreferredSymbolConfiguration(.init(pointSize: 25, weight:  .regular, scale: .default), forImageIn: .normal)
-        self.delMemoButton.snp.makeConstraints{make in
-            make.trailing.equalToSuperview().inset(24)
-            make.centerY.equalToSuperview()
-        }
-    }
-    
+   
     private func setUpdateMemoButton() {
         self.contentView.addSubview(self.updateMemoButton)
         //self.updateMemoButton.addTarget(self, action: #selector(self.updateMemo), for: .touchUpInside)
         self.updateMemoButton.setImage(UIImage(systemName: "pencil"), for: .normal)
         self.updateMemoButton.setPreferredSymbolConfiguration(.init(pointSize: 25, weight:  .regular, scale: .default), forImageIn: .normal)
         self.updateMemoButton.snp.makeConstraints{make in
-            make.trailing.equalTo(self.delMemoButton).inset(38)
+            make.trailing.equalToSuperview().inset(24)
             make.centerY.equalToSuperview()
         }
     }

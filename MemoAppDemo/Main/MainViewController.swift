@@ -13,7 +13,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     var delegate : WriteViewController?
     private let appLabel = UILabel()
-    private let MemoListTable = UITableView()
+    private let memoTableView = UITableView()
     private let viewModel = MainViewModel()
     private let customCell = MemoTableViewCell()
     private let rightButton : UIButton = {
@@ -33,12 +33,12 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     private func setTableView() {
-        self.view.addSubview(MemoListTable)
-        self.MemoListTable.register(MemoTableViewCell.self, forCellReuseIdentifier: MemoTableViewCell.cellId)
-        self.MemoListTable.rowHeight = 60
-        self.MemoListTable.delegate = self
-        self.MemoListTable.dataSource = self
-        self.MemoListTable.snp.makeConstraints{ make in
+        self.view.addSubview(memoTableView)
+        self.memoTableView.register(MemoTableViewCell.self, forCellReuseIdentifier: MemoTableViewCell.cellId)
+        self.memoTableView.rowHeight = 60
+        self.memoTableView.delegate = self
+        self.memoTableView.dataSource = self
+        self.memoTableView.snp.makeConstraints{ make in
             make.width.height.equalToSuperview()
             make.top.equalToSuperview().inset(100)
         }
@@ -64,24 +64,29 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         return length
     }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .delete
+    }
+    func tableView(_ tableView: UITableView ,cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MemoTableViewCell.cellId) as! MemoTableViewCell
-        cell.selectionStyle = .none
+//        cell.selectionStyle = .none
         viewModel.memo.bind{make in
             cell.cellLabel.text = make![indexPath.row].title
         }
-        cell.delMemoButton.addTarget(self, action: #selector(deleteMemo(index:)), for: .touchUpInside)
-        cell.delMemoButton.tag = indexPath.row
-        
         cell.updateMemoButton.addTarget(self, action: #selector(updateMemo(index:)), for: .touchUpInside)
         cell.updateMemoButton.tag = indexPath.row
         return cell
     }
-    @objc func deleteMemo(index : UIButton) {
-        viewModel.delMemo(index: index.tag)
-        //self.MemoListTable.reloadData()
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            //viewModel.delMemo(index: indexPath.row)
+            memoTableView.beginUpdates()
+            memoTableView.deleteRows(at: [indexPath], with: .fade)
+            memoTableView.endUpdates()
+        }
     }
+  
     @objc func updateMemo(index : UIButton) {
         let controller = WriteViewController()
         self.delegate = controller

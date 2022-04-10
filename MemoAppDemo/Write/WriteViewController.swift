@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+
 protocol UpdateMemoDelegate {
     func updateMemo(memoIdx: Int)
 }

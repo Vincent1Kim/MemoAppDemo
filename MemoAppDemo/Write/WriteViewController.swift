@@ -8,47 +8,63 @@
 import UIKit
 import SnapKit
 
-final class WriteViewController: UIViewController, UITextViewDelegate{
-    
-    private let titleTextView = UITextView()
+protocol UpdateMemoDelegate {
+    func updateMemo(memoIdx: Int)
+}
+final class WriteViewController: UIViewController, UITextViewDelegate, UpdateMemoDelegate{
+    private var idx : Int? = nil
+    private let titleTextField = UITextField()
     private let contentTextView = UITextView()
+    private let viewModel = WriteViewModel()
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         setNavigation()
         setTitleTextField()
-        setContentTextField()
+        setContentTextView()
+        viewModel.memo.bind{make in
+            self.titleTextField.text = make?[0].title
+            self.contentTextView.text = make?[0].content
+        }
+    }
+    func updateMemo(memoIdx: Int) {
+        idx = memoIdx
+        viewModel.getMemo(idx: memoIdx)
+        print(memoIdx)
     }
     private func setNavigation() {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "메모 저장", style: .plain, target: self, action: #selector(saveMemo))
     }
-    private func setContentTextField() {
+    private func setContentTextView() {
         self.view.addSubview(contentTextView)
-        //self.contentTextField.placeholder = "내용을 입력해주세요"
-        self.contentTextView.font = .systemFont(ofSize: 16)
+        self.contentTextView.text = "내용을 입력해주세요"
+        self.contentTextView.font = .systemFont(ofSize: 20)
         self.contentTextView.layer.borderWidth = 1.0
         self.contentTextView.snp.makeConstraints{make in
-            make.top.equalTo(titleTextView).inset(80)
+            make.top.equalTo(titleTextField).inset(80)
             make.leading.trailing.equalToSuperview().inset(16)
             make.bottom.equalToSuperview().inset(16)
         }
     }
     private func setTitleTextField() {
-        self.view.addSubview(titleTextView)
-        self.titleTextView.becomeFirstResponder()
-        self.titleTextView.layer.borderWidth = 1.0
-        self.titleTextView.font = .systemFont(ofSize: 24)
-        self.titleTextView.text = "어디로 가야하죠"
-        self.titleTextView.snp.makeConstraints{ make in
-            make.top.equalToSuperview().inset(80)
-            make.bottom.equalToSuperview().inset(200)
-            make.trailing.leading.equalToSuperview().inset(16)
+        self.view.addSubview(titleTextField)
+        self.titleTextField.placeholder = "제목"
+        self.titleTextField.layer.borderWidth = 1.0
+        self.titleTextField.textAlignment = .center
+        self.titleTextField.font = .systemFont(ofSize: 24)
+        self.titleTextField.snp.makeConstraints{ make in
+            make.top.equalToSuperview().inset(100)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(80)
         }
     }
     @objc func saveMemo() {
-        print("test")
-        //        viewModel.saveMemo(title: tfTitle.text!, content: tfContent.text!)
-        //        self.dismiss(animated: true)
-        //        mainViewController.getMemoList()
+        if idx != nil {
+            self.viewModel.updateMemo(idx: idx!, title: self.titleTextField.text!, content: self.contentTextView.text)
+            self.navigationController?.popViewController(animated: true)
+        }else {
+            self.viewModel.saveMemo(title: self.titleTextField.text!, content: self.contentTextView.text!)
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 }

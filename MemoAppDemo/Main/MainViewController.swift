@@ -7,12 +7,16 @@
 
 import UIKit
 import SnapKit
+import RealmSwift
 
-final class MainViewController: UIViewController, UITableViewDataSource  {
-    
-    
+final class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    var delegate : WriteViewController?
+    private var array : Array<MemoModel?> = []
     private let appLabel = UILabel()
-    private let MemoListTable = UITableView()
+    private let memoTableView = UITableView()
+    private let viewModel = MainViewModel()
+    private let customCell = MemoTableViewCell()
+    
     private let rightButton : UIButton = {
         let button = UIButton()
         button.setPreferredSymbolConfiguration(.init(pointSize: 28, weight:  .regular, scale: .default), forImageIn: .normal)
@@ -26,41 +30,71 @@ final class MainViewController: UIViewController, UITableViewDataSource  {
         self.setNavigation()
         self.setTableView()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        self.viewModel.getMemo()
+        array = Array<MemoModel>()
+        viewModel.memo.bind{ make in
+            for index in 0..<make!.count{
+                self.array.append(make![index])
+            }
+        }
+        self.memoTableView.reloadData()
+    }
     
     private func setTableView() {
-        self.view.addSubview(MemoListTable)
-        self.MemoListTable.register(MemoTableViewCell.self, forCellReuseIdentifier: "cell")
-        self.MemoListTable.dataSource = self
-        self.MemoListTable.rowHeight = 60
-        self.MemoListTable.snp.makeConstraints{ make in
+        self.view.addSubview(memoTableView)
+        self.memoTableView.register(MemoTableViewCell.self, forCellReuseIdentifier: MemoTableViewCell.cellId)
+        self.memoTableView.rowHeight = 60
+        self.memoTableView.delegate = self
+        self.memoTableView.dataSource = self
+        self.memoTableView.separatorStyle = .none
+        self.memoTableView.snp.makeConstraints{ make in
             make.width.height.equalToSuperview()
             make.top.equalToSuperview().inset(100)
         }
     }
     
     private func setNavigation() {
-//        let menuBarItem = UIBarButtonItem(customView: self.rightButton)
         self.navigationController?.isNavigationBarHidden = false
         self.navigationItem.title = "DemoMemo"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(moveWriterController))
     }
-    //지금 당장 필요없기에 임시적으로 주석처리
+    
     @objc func moveWriterController() {
-//        print("왜 먹지 않을까요!")
         let controller = WriteViewController()
         self.navigationController?.pushViewController(controller, animated: true)
     }
-    //cell의 갯수 (임의로 설정)
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 50
+        return array.count
+    }
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .delete
+    }
+    func tableView(_ tableView: UITableView ,cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MemoTableViewCell.cellId) as! MemoTableViewCell
+        cell.selectionStyle = .none
+        viewModel.memo.bind{make in
+            cell.cellLabel.text = make![indexPath.row].title
+        }
+        cell.updateMemoButton.addTarget(self, action: #selector(updateMemo(index:)), for: .touchUpInside)
+        cell.updateMemoButton.tag = indexPath.row
+        return cell
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell: UITableViewCell = self.MemoListTable.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? MemoTableViewCell else {
-            return UITableViewCell()
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            viewModel.delMemo(index: indexPath.row)
+            self.array.remove(at: indexPath.row)
+            self.memoTableView.deleteRows(at: [indexPath], with: .fade)
         }
-        cell.selectionStyle = .none
-        return cell
+    }
+    
+    @objc func updateMemo(index : UIButton) {
+        let controller = WriteViewController()
+        self.delegate = controller
+        delegate?.updateMemo(memoIdx: index.tag)
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 }

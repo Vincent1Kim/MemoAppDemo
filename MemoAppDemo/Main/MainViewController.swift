@@ -9,8 +9,7 @@ import UIKit
 import SnapKit
 import RealmSwift
 
-class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-   
+final class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     var delegate : WriteViewController?
     private var array : Array<MemoModel?> = []
     private let appLabel = UILabel()

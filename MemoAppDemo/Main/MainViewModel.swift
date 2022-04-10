@@ -11,10 +11,9 @@ protocol MainViewModelProtocol {
     var memo: Observable<Results<MemoModel>?>{get set}
 }
 
-class MainViewModel : MainViewModelProtocol {
+final class MainViewModel : MainViewModelProtocol {
     private let realm = try! Realm()
     var memo: Observable<Results<MemoModel>?> = Observable(nil)
-    var title: Observable<Int> = Observable(0)
     
     func getMemo() {
         print(realm.objects(MemoModel.self))
@@ -26,6 +25,5 @@ class MainViewModel : MainViewModelProtocol {
         try! self.realm.write{
             self.realm.delete(memoData[index])
         }
-        title.value = index
     }
 }

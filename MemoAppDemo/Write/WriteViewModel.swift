@@ -10,10 +10,8 @@ protocol WriteViewModelProtocol {
     var memo: Observable<Results<MemoModel>?>{get set}
 }
 final class WriteViewModel : WriteViewModelProtocol {
-    var memo: Observable<Results<MemoModel>?> = Observable(nil)
-    
-    
     private let realm = try! Realm()
+    var memo: Observable<Results<MemoModel>?> = Observable(nil)
     
     func saveMemo(title: String, content: String) {
         let initMemo = MemoModel()

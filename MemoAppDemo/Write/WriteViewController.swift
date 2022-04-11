@@ -8,14 +8,16 @@
 import UIKit
 import SnapKit
 
-protocol UpdateMemoDelegate {
+protocol UpdateMemoDelegate: AnyObject {
     func updateMemo(memoIdx: Int)
 }
+
 final class WriteViewController: UIViewController, UITextViewDelegate, UpdateMemoDelegate{
     private var idx : Int? = nil
     private let titleTextField = UITextField()
     private let contentTextView = UITextView()
     private let viewModel = WriteViewModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
@@ -27,14 +29,17 @@ final class WriteViewController: UIViewController, UITextViewDelegate, UpdateMem
             self.contentTextView.text = make?[0].content
         }
     }
+    
     func updateMemo(memoIdx: Int) {
         idx = memoIdx
         viewModel.getMemo(idx: memoIdx)
         print(memoIdx)
     }
+    
     private func setNavigation() {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "메모 저장", style: .plain, target: self, action: #selector(saveMemo))
     }
+    
     private func setContentTextView() {
         self.view.addSubview(contentTextView)
         self.contentTextView.text = "내용을 입력해주세요"
@@ -46,6 +51,7 @@ final class WriteViewController: UIViewController, UITextViewDelegate, UpdateMem
             make.bottom.equalToSuperview().inset(16)
         }
     }
+    
     private func setTitleTextField() {
         self.view.addSubview(titleTextField)
         self.titleTextField.placeholder = "제목"
@@ -58,6 +64,7 @@ final class WriteViewController: UIViewController, UITextViewDelegate, UpdateMem
             make.height.equalTo(80)
         }
     }
+    
     @objc func saveMemo() {
         if idx != nil {
             self.viewModel.updateMemo(idx: idx!, title: self.titleTextField.text!, content: self.contentTextView.text)

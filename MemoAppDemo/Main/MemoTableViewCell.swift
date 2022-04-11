@@ -11,7 +11,7 @@ import SnapKit
 class MemoTableViewCell: UITableViewCell {
     static let cellId = "memoCell"
     private let viewModel = MainViewModel()
-    public let cellLabel = UILabel()
+    private let cellLabel = UILabel()
     let updateMemoButton = UIButton()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

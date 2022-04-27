@@ -10,7 +10,7 @@ import SnapKit
 
 final class MainViewController: UIViewController, UITableViewDataSource  {
     
-    
+    // test 222
     private let appLabel = UILabel()
     private let MemoListTable = UITableView()
     private let rightButton : UIButton = {
